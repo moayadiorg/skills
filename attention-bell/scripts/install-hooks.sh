@@ -3,6 +3,7 @@ set -euo pipefail
 
 # ── Attention Bell Hook Installer ──
 # Merges terminal bell hooks into Claude Code settings.
+# Auto-detects OS: macOS uses afplay, Linux uses TTY bell.
 #
 # Usage: install-hooks.sh [--global|--project]
 
@@ -27,9 +28,16 @@ else
   mkdir -p ".claude"
 fi
 
-# ── Hook template ──
+# ── Select hooks file based on OS ──
 
-HOOKS_FILE="${SCRIPT_DIR}/hooks.json"
+OS="$(uname -s)"
+case "$OS" in
+  Darwin) HOOKS_FILE="${SCRIPT_DIR}/hooks-macos.json" ;;
+  Linux)  HOOKS_FILE="${SCRIPT_DIR}/hooks-linux.json" ;;
+  *)      echo "Unsupported OS: $OS" >&2; exit 1 ;;
+esac
+
+echo "Detected OS: $OS"
 
 # ── Install ──
 

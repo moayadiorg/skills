@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
 
 # /attention-bell — Terminal Bell Notification Hooks
 
-Installs Claude Code hooks that ring the terminal bell (`\a`) when Claude needs your attention. Works over SSH and in any terminal that supports the bell character (iTerm2, VS Code with `terminal.integrated.enableBell` enabled, kitty, WezTerm, etc.).
+Installs Claude Code hooks that play a sound when Claude needs your attention. Works on both macOS and Linux (including remote SSH servers).
 
 ## What it installs
 
@@ -17,13 +17,15 @@ Two hooks:
 - **Stop** — Rings when Claude finishes responding and is waiting for input
 - **Notification (permission_prompt)** — Rings when a tool needs your approval
 
-## How the bell reaches your terminal
+## How it works
 
-Claude Code subprocesses don't have a controlling TTY, so `echo '\a'` alone won't work. The hook finds the `claude` process's TTY and writes the bell character directly to it:
+The installer auto-detects your OS and uses the appropriate method:
 
-```bash
-TTY=$(ps -eo tty,comm | grep claude | grep -v grep | awk '{print $1}' | head -1) && [ -n "$TTY" ] && printf '\a' > /dev/$TTY
-```
+- **macOS** — Plays the system Glass sound via `afplay /System/Library/Sounds/Glass.aiff`. Since Claude Code runs locally on macOS, no TTY tricks are needed.
+- **Linux** — Claude Code subprocesses don't have a controlling TTY, so `echo '\a'` alone won't work. The hook finds the `claude` process's TTY and writes the bell character directly to it:
+  ```bash
+  TTY=$(ps -eo tty,comm | grep claude | grep -v grep | awk '{print $1}' | head -1) && [ -n "$TTY" ] && printf '\a' > /dev/$TTY
+  ```
 
 ## Flow
 
@@ -65,9 +67,9 @@ You'll hear a bell when:
   - A tool needs your approval (permission prompt)
 
 Requirements:
-  - Your terminal must support the bell character
+  - macOS: System Settings > Sound > Alert volume must be turned up
+  - Linux: Your terminal must support the bell character
   - VS Code: set "terminal.integrated.enableBell": true in settings
-  - macOS: check System Settings > Sound > Alert volume is turned up
 
 The hooks take effect on the next Claude Code session.
 ```
