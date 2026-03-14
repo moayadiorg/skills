@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -qE '\"file_path\":\\s*\"[^\"]*/(src|tests)/'; then echo '📋 Reminder: Code changes detected. Run Phase 4 review before marking stage complete.'; fi",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f '.specs/project.living.md' ]; then echo '📊 Session ending. Consider checking spec drift before closing.'; fi",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}
