@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "TTY=$(ps -eo tty,comm | grep claude | grep -v grep | awk '{print $1}' | head -1) && [ -n \"$TTY\" ] && printf '\\a' > /dev/$TTY"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "TTY=$(ps -eo tty,comm | grep claude | grep -v grep | awk '{print $1}' | head -1) && [ -n \"$TTY\" ] && printf '\\a' > /dev/$TTY"
+          }
+        ]
+      }
+    ]
+  }
+}
